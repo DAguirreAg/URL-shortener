@@ -1,6 +1,6 @@
 class IDGenerator:
     
-    latest_id = 0
+    latest_id = 570
     
     def __init__(self):
         pass       
