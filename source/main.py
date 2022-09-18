@@ -19,7 +19,6 @@ def get_db():
     finally:
         db.close()
 
-
 @app.get("/{shortURL}", response_model=schemas.LongUrl)
 def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
     '''Logic to get longURL from shortURL'''
