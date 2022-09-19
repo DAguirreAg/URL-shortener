@@ -1,12 +1,11 @@
 from fastapi import FastAPI, Path, Depends, HTTPException, responses
 from sqlalchemy.orm import Session
 from starlette.requests import Request
-from utils import idToShortURL, shortURLToId
-
 import starlette.status as status
-
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
+from utils import idToShortURL, shortURLToId
+import validators
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
@@ -40,10 +39,14 @@ def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
 @app.post("/create-shortURL/")
 def create_shortURL(longURL: str, db: Session = Depends(get_db)):
     '''Logic to create a shortURL based on longURL'''
+    
+    # Validate LongURL
+    if not validators.url(longURL):
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Provided URL not correct.")
 
     # Check if shortURL in DB
     if crud.check_longURL_in_db(db, longURL):
-        raise HTTPException(status_code=404, detail="LongURL already exists")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LongURL already exists")
 
     # Get unique ID and calculate shortURL
     nextID = crud.get_next_id(db)
