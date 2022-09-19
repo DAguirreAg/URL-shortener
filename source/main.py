@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Path, Depends, HTTPException
+from fastapi import FastAPI, Path, Depends, HTTPException, responses
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 from utils import idToShortURL, shortURLToId
+
+import starlette.status as status
 
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
@@ -17,7 +19,7 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/{shortURL}", response_model=schemas.LongUrl)
+@app.get("/{shortURL}")#, response_model=schemas.LongUrl)
 def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
     '''Logic to get longURL from shortURL'''
     # Get id from shortURL
@@ -27,12 +29,12 @@ def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
     longURL = crud.get_longURL(db, id=id)
 
     if longURL is None:
-        raise HTTPException(status_code=404, detail="LongURL not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LongURL not found")
 
     # Register visit
     crud.create_transaction(db, shortURL, request.headers)
 
-    return longURL
+    return responses.RedirectResponse(url=longURL, status_code=status.HTTP_302_FOUND)
 
 
 @app.post("/create-shortURL/")

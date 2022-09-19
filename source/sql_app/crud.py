@@ -3,9 +3,13 @@ from . import models, schemas
 from starlette.requests import Request
 
 def get_longURL(db: Session, id: int):
-    results = db.query(models.Urls).filter(models.Urls.id == id).first()        
-    return results
+    results = db.query(models.Urls).filter(models.Urls.id == id).first() 
 
+    if results is None:
+        return None
+    
+    longURL = results.longURL
+    return longURL
 
 def create_transaction(db: Session, shortURL: str, headers: Request.headers):    
     transaction = models.Transactions(shortURL=shortURL, header='XXXXXXXXX')
