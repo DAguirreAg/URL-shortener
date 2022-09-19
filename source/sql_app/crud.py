@@ -23,6 +23,5 @@ def create_shortURL(db: Session, id: int, shortURL: str, longURL: str):
     db.commit()
 
 def get_next_id(db: Session):
-    print('aaa')
     nextID = models.seq_obj.execute()
     return nextID

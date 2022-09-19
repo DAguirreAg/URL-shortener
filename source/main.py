@@ -51,9 +51,3 @@ def create_shortURL(longURL: str, db: Session = Depends(get_db)):
     crud.create_shortURL(db, nextID, shortURL, longURL)
     
     return shortURL
-
-@app.get("/test/")
-def get_nextID(db: Session = Depends(get_db)):
-    '''Logic to get longURL from shortURL'''
-    nextID = crud.get_next_id(db)
-    return nextID
