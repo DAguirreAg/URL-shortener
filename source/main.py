@@ -2,14 +2,12 @@ from fastapi import FastAPI, Path, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 from utils import idToShortURL, shortURLToId
-from IDGenerator import IDGenerator
 
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
-idgenerator = IDGenerator()
 
 # Dependency
 def get_db():
@@ -46,11 +44,16 @@ def create_shortURL(longURL: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="LongURL already exists")
 
     # Get unique ID and calculate shortURL
-    id = idgenerator.getNextID()
-    shortURL = idToShortURL(id)
+    nextID = crud.get_next_id(db)
+    shortURL = idToShortURL(nextID)
 
     # Add to DB
-    crud.create_shortURL(db, id, shortURL, longURL)
+    crud.create_shortURL(db, nextID, shortURL, longURL)
     
     return shortURL
 
+@app.get("/test/")
+def get_nextID(db: Session = Depends(get_db)):
+    '''Logic to get longURL from shortURL'''
+    nextID = crud.get_next_id(db)
+    return nextID

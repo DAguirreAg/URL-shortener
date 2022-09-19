@@ -17,8 +17,12 @@ def check_longURL_in_db(db: Session, longURL: str):
     results = db.query(models.Urls).filter(models.Urls.longURL == longURL).first()
     return results
 
-
 def create_shortURL(db: Session, id: int, shortURL: str, longURL: str):
     url = models.Urls(id=id, shortURL=shortURL, longURL=longURL)
     db.add(url)
     db.commit()
+
+def get_next_id(db: Session):
+    print('aaa')
+    nextID = models.seq_obj.execute()
+    return nextID
