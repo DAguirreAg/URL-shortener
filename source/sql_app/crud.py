@@ -1,3 +1,4 @@
+from urllib import request
 from sqlalchemy.orm import Session
 from . import models, schemas
 from starlette.requests import Request
@@ -11,8 +12,8 @@ def get_longURL(db: Session, id: int):
     longURL = results.longURL
     return longURL
 
-def create_transaction(db: Session, shortURL: str, headers: Request.headers):    
-    transaction = models.Transactions(shortURL=shortURL, header='XXXXXXXXX')
+def create_transaction(db: Session, shortURL: str, headers: Request.headers): 
+    transaction = models.Transactions(shortURL=shortURL, header=headers)
     db.add(transaction)
     db.commit()
 

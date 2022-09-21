@@ -48,11 +48,14 @@ def get_db():
 @app.get("/{shortURL}", tags=['Urls'])
 def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
     '''Logic to get longURL from shortURL'''
+
     # Get id from shortURL
     id = shortURLToId(shortURL)
 
     # Fetch data
     longURL = crud.get_longURL(db, id=id)
+
+    print(f'longURL: {longURL}')
 
     if longURL is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LongURL not found")
@@ -60,7 +63,7 @@ def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
     # Register visit
     crud.create_transaction(db, shortURL, request.headers)
 
-    return responses.RedirectResponse(url=longURL, status_code=status.HTTP_302_FOUND)
+    return responses.RedirectResponse(url=longURL, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
 @app.post("/create-shortURL", tags=['Urls'])
@@ -87,3 +90,4 @@ def create_shortURL(longURL: str, db: Session = Depends(get_db)):
 @app.delete("/delete-shortURL", tags=['Urls'])
 def delete_shortURL(shortURL: str, db: Session = Depends(get_db)):
     crud.delete_shortURL(db, shortURL)
+
