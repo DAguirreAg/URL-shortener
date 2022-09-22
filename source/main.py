@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Depends, HTTPException, responses
+from fastapi import FastAPI, Path, Depends, HTTPException, Response, responses
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 import starlette.status as status
@@ -55,8 +55,6 @@ def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
     # Fetch data
     longURL = crud.get_longURL(db, id=id)
 
-    print(f'longURL: {longURL}')
-
     if longURL is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LongURL not found")
 
@@ -69,12 +67,12 @@ def get_longURL(shortURL: str, request: Request, db: Session = Depends(get_db)):
 @app.post("/create-shortURL", tags=['Urls'])
 def create_shortURL(longURL: str, db: Session = Depends(get_db)):
     '''Logic to create a shortURL based on longURL'''
-    
+
     # Validate LongURL
     if not validators.url(longURL):
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Provided URL not correct.")
-
-    # Check if shortURL in DB
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Provided URL not correct.")
+    
+    # Check if LongURL in DB
     if crud.check_longURL_in_db(db, longURL):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LongURL already exists")
 
@@ -84,8 +82,9 @@ def create_shortURL(longURL: str, db: Session = Depends(get_db)):
 
     # Add to DB
     crud.create_shortURL(db, nextID, shortURL, longURL)
+
+    return {"shortURL": shortURL}
     
-    return shortURL
 
 @app.delete("/delete-shortURL", tags=['Urls'])
 def delete_shortURL(shortURL: str, db: Session = Depends(get_db)):

@@ -13,7 +13,7 @@ def get_longURL(db: Session, id: int):
     return longURL
 
 def create_transaction(db: Session, shortURL: str, headers: Request.headers): 
-    transaction = models.Transactions(shortURL=shortURL, header=headers)
+    transaction = models.Transactions(shortURL=shortURL, header=str(headers))
     db.add(transaction)
     db.commit()
 
