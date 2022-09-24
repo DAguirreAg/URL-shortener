@@ -6,33 +6,16 @@ from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from utils import idToShortURL, shortURLToId
 import validators
-
-# Metadata 
-description = '''
-URL-Shortener App is a simplified implementation of common URL-shortener services as [TinyURL](https://tinyurl.com/app) or [Bit.ly](https://bitly.com/).
-'''
-
-tags_metadata = [
-    {
-        "name": "Urls",
-        "description": "Operations with Urls. Includes the creation of shortURLs and retrieval of the longURLs.",
-    }
-]
+from config import Config
 
 # Main App
 app = FastAPI(
-    title="URL-Shortener App",
-    description=description,
-    version="0.0.1",
-    contact={
-        "name": "DAguirreAg",
-        "url": "https://github.com/DAguirreAg/"
-    },
-    license_info={
-        "name": " MIT License",
-        "url": "https://mit-license.org/",
-    },
-    openapi_tags=tags_metadata
+    title=Config.TITLE,
+    description=Config.DESCRIPTION,
+    version=Config.VERSION,
+    contact=Config.CONTACT,
+    license_info=Config.LICENSE_INFO,
+    openapi_tags=Config.TAGS_METADATA
 )
 
 models.Base.metadata.create_all(bind=engine)
@@ -70,11 +53,11 @@ def create_shortURL(longURL: str, db: Session = Depends(get_db)):
 
     # Validate LongURL
     if not validators.url(longURL):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Provided URL not correct.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Provided URL not correct.")
     
     # Check if LongURL in DB
     if crud.check_longURL_in_db(db, longURL):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="LongURL already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="LongURL already exists")
 
     # Get unique ID and calculate shortURL
     nextID = crud.get_next_id(db)
@@ -89,4 +72,4 @@ def create_shortURL(longURL: str, db: Session = Depends(get_db)):
 @app.delete("/delete-shortURL", tags=['Urls'])
 def delete_shortURL(shortURL: str, db: Session = Depends(get_db)):
     crud.delete_shortURL(db, shortURL)
-
+    return {}
