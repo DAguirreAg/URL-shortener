@@ -12,7 +12,7 @@ The main task of URL shorteners is to take long strings of URLs and convert them
 Follow the next steps:
 * Open the `config.py` file and modify the `SQLALCHEMY_DATABASE_URL` to your favourite database. (Please note that due to the usage of Sequences for ID generation, SQLite cannot be used).
 * Install the required python packages via `pip install -r requirements.txt`. (It is recommended to use virtual environments when installing them to avoid conflicting version issues).
-* Open a terminal window and type `uvicorn main:app --reload` to launch the application.
+* Open a terminal window and type `python3 app/main.py` to launch the application.
 * Open a browser and type `http://127.0.0.1:800/docs` in the address bar to open an interactive view of the App.
 
 <p align="middle">
