@@ -2,6 +2,7 @@ from fastapi import FastAPI, Path, Depends, HTTPException, Response, responses
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 import starlette.status as status
+import uvicorn
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from utils import idToShortURL, shortURLToId
@@ -73,3 +74,6 @@ def create_shortURL(longURL: str, db: Session = Depends(get_db)):
 def delete_shortURL(shortURL: str, db: Session = Depends(get_db)):
     crud.delete_shortURL(db, shortURL)
     return {}
+
+if __name__ == "__main__":
+    uvicorn.run(app, port=1234, host='0.0.0.0')
