@@ -13,7 +13,7 @@ Follow the next steps:
 * Open the `config.py` file and modify the `SQLALCHEMY_DATABASE_URL` to your favourite database. (Please note that due to the usage of Sequences for ID generation, SQLite cannot be used).
 * Install the required python packages via `pip install -r requirements.txt`. (It is recommended to use virtual environments when installing them to avoid conflicting version issues).
 * Open a terminal window and type `python3 app/main.py` to launch the application.
-* Open a browser and type `http://127.0.0.1:800/docs` in the address bar to open an interactive view of the App.
+* Open a browser and type `http://127.0.0.1:8000/docs` in the address bar to open an interactive view of the App.
 
 <p align="middle">
   <img src="documentation/Running%20URL-shortener%20App.png" alt="Running URL-shortener App.png" height=200></br>
